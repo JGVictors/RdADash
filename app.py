@@ -65,12 +65,30 @@ def backlog():
             df['Responsável'] = df.pop('Responsável')
             df['Time'] = df.pop('Time')
 
-            
+            just_acao = []
+            for i in range(len(df)):
+                ta = df.iloc[i]
+                txt = ''
+                if ta['Responsável'] in ['Automacao', 'AUTOMACAO NOC', 'NOC MG Astro', 'ERB Sem Cadastro/Não Ativo']:
+                    txt = 'TA na Responsabilidade da Automação'
+                elif ta['Responsável'] in ['Eventos S1', 'Eventos IUB']:
+                    txt = 'TA no Fluxo SONAR'
+                elif ta['Responsável'] == 'NOC MG Desempenho On Line_Retenção':
+                    txt = 'TA Aguardando Atuação da Raiz (Esperado)'
+                elif ta['Raiz'] != '0'  and 'ASTRO PERSISTENCIA' in str(ta['Tipo Bilhete Raiz']):
+                    if ta['Tempo Baixa'] in ['>365D', '>180D', '>90D', '>30D', '>7D', '>3D', '>1D']:
+                        txt = 'TA Aguardando Atuação da Raiz (Fora do Prazo)'
+                    elif ta['Tempo Baixa'] in ['<=4h']:
+                        txt = 'TA Aguardando Atuação da Raiz (Esperado)'
+
+                just_acao.append(txt)
+
+            df['Justificativa / Ação'] = just_acao
 
             nome_arquivo = 'Backlog NOC ' + agora + '.xlsx'
             df.to_excel(os.path.join(UPLOAD_FOLDER, nome_arquivo))
         except Exception as e:
-            print('Deu erro', e)
+            print('Deu erro', e.with_traceback())
 
     return render_template('backlog.html', form=form, tentou=tentou, tempo=agora, df=df)
 
