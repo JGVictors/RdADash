@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if tentou %}
+    {% if df is not none %}
+        <h1>Backlog Formatado!</h1>
+        <br>
+        <h3><a href="{{url_for('download_backlog', tempo=tempo)}}">Baixar Planilha Excel</a></h3>
+        <br>
+        <table class="table text-nowrap">
+            <thead>
+                <tr>
+                    <th scope="col">Ticket</th>
+                    {% for header in df.keys() %}
+                        <th scope="col">{{header}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for x in range(df|length) %}
+                    <tr>
+                        <th scope="row">{{df.iloc[x].name}}</th>
+                        {% for c in df.keys()%}
+                            <th scope="row">{{df.iloc[x][c]}}</th>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h1>Deu erro em algum lugar, tente novamemnte...</h1>
+    {% endif %}
+{% else %}
+    <h1>Backlog NOC</h1>
+    <br>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        {{ form.arquivo(class="form-control") }}
+        <br>
+        {{ form.submit(class="btn btn-info") }}
+    </form>
+{% endif %}
+
+{% endblock %}
