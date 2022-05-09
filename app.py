@@ -69,17 +69,21 @@ def backlog():
             for i in range(len(df)):
                 ta = df.iloc[i]
                 txt = ''
-                if ta['Responsável'] in ['Automacao', 'AUTOMACAO NOC', 'NOC MG Astro', 'ERB Sem Cadastro/Não Ativo']:
+                if ta['Raiz'] != '0':
+                    if ta['Tempo Baixa'] == '<=4h':
+                        txt = 'TA Aguardando Atuação da Raiz (Esperado)'
+                    elif 'ASTRO PERSISTENCIA' in str(ta['Tipo Bilhete Raiz']):
+                        if ta['Tempo Baixa'] in ['>365D', '>180D', '>90D', '>30D', '>7D', '>3D', '>1D']:
+                            txt = 'TA Aguardando Atuação da Raiz (Fora do Prazo)'
+                    elif ta['Tipo Bilhete Raiz'] == 'ASTRO DOL':
+                        if ta['Tempo Baixa'] == '>4h':
+                            txt = 'TA Aguardando Atuação da Raiz (Esperado)'
+                elif ta['Responsável'] in ['Automacao', 'AUTOMACAO NOC', 'NOC MG Astro', 'ERB Sem Cadastro/Não Ativo']:
                     txt = 'TA na Responsabilidade da Automação'
                 elif ta['Responsável'] in ['Eventos S1', 'Eventos IUB']:
                     txt = 'TA no Fluxo SONAR'
                 elif ta['Responsável'] == 'NOC MG Desempenho On Line_Retenção':
                     txt = 'TA Aguardando Atuação da Raiz (Esperado)'
-                elif ta['Raiz'] != '0'  and 'ASTRO PERSISTENCIA' in str(ta['Tipo Bilhete Raiz']):
-                    if ta['Tempo Baixa'] in ['>365D', '>180D', '>90D', '>30D', '>7D', '>3D', '>1D']:
-                        txt = 'TA Aguardando Atuação da Raiz (Fora do Prazo)'
-                    elif ta['Tempo Baixa'] in ['<=4h']:
-                        txt = 'TA Aguardando Atuação da Raiz (Esperado)'
 
                 just_acao.append(txt)
 
