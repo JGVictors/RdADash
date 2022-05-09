@@ -69,6 +69,7 @@ def backlog():
             for i in range(len(df)):
                 ta = df.iloc[i]
                 txt = ''
+                
                 if ta['Raiz'] != '0':
                     if ta['Tempo Baixa'] == '<=4h':
                         txt = 'TA Aguardando Atuação da Raiz (Esperado)'
@@ -78,12 +79,14 @@ def backlog():
                     elif ta['Tipo Bilhete Raiz'] == 'ASTRO DOL':
                         if ta['Tempo Baixa'] == '>4h':
                             txt = 'TA Aguardando Atuação da Raiz (Esperado)'
-                elif ta['Responsável'] in ['Automacao', 'AUTOMACAO NOC', 'NOC MG Astro', 'ERB Sem Cadastro/Não Ativo']:
-                    txt = 'TA na Responsabilidade da Automação'
-                elif ta['Responsável'] in ['Eventos S1', 'Eventos IUB']:
-                    txt = 'TA no Fluxo SONAR'
-                elif ta['Responsável'] == 'NOC MG Desempenho On Line_Retenção':
-                    txt = 'TA Aguardando Atuação da Raiz (Esperado)'
+
+                if txt == '':
+                    if ta['Responsável'] in ['Automacao', 'AUTOMACAO NOC', 'NOC MG Astro', 'ERB Sem Cadastro/Não Ativo']:
+                        txt = 'TA na Responsabilidade da Automação'
+                    elif ta['Responsável'] in ['Eventos S1', 'Eventos IUB']:
+                        txt = 'TA no Fluxo SONAR'
+                    elif ta['Responsável'] == 'NOC MG Desempenho On Line_Retenção':
+                        txt = 'TA Aguardando Atuação da Raiz (Esperado)'
 
                 just_acao.append(txt)
 
