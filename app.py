@@ -104,7 +104,7 @@ def backlog():
                 nome_arquivo = f'Backlog NOC ' \
                                f'{agora.day:02}{agora.month:02}{agora.year} ' \
                                f'{agora.hour:02}{agora.minute:02} {int(agora.timestamp())}'
-                df.to_excel(os.path.join(UPLOAD_FOLDER, nome_arquivo))
+                df.to_excel(os.path.join(UPLOAD_FOLDER, nome_arquivo + '.xlsx'))
             except Exception as e:
                 df = None
                 erro = str(e)
@@ -117,7 +117,7 @@ def backlog():
 
 @app.route('/download_backlog/<idfile>')
 def download_backlog(idfile):
-    return send_file(os.path.join(UPLOAD_FOLDER, idfile))
+    return send_file(os.path.join(UPLOAD_FOLDER, idfile + '.xlsx'))
 
 @app.errorhandler(404)
 def page_not_found(e):
