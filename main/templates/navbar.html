@@ -1,0 +1,32 @@
+<nav class="navbar navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+
+        <img class="me-2" src="{{ url_for('main.static', filename='images/vivo-logo.png') }}" id="logo">
+        <a class="navbar-brand" href="{{ url_for('main.index') }}">RdA Dashboard</a>
+        <div>
+            <button class="navbar-toggler ms-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+
+        <div class="offcanvas offcanvas-end bg-dark" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+
+            <div class="offcanvas-header bg-light">
+                <div class="offcanvas-title d-flex flex-fill" id="offcanvasNavbarLabel">
+                    <h5 class="mb-0" >Menu</h5>
+                    <p class="mb-0 flex-fill mt-auto px-1 text-muted text-end" id="timenow">XX/XX/XX XX:XX:XX</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+
+            <div class="offcanvas-body">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('backlog.thebacklog') }}">Backlog</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</nav>

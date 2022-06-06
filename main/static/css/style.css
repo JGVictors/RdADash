@@ -1,0 +1,19 @@
+#logo {
+    height: 1.25rem;
+}
+
+.navbar-toggler {
+    font-size: 1rem;
+}
+
+#timenow {
+    font-size: 0.65rem;
+    opacity: 0.5;
+}
+
+.btn-xs {
+  padding: .3rem .4rem;
+  font-size: .65rem;
+  line-height: .5;
+  border-radius: .2rem;
+}
