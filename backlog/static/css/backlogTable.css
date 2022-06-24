@@ -1,0 +1,11 @@
+#backlogTable tr {
+    vertical-align: middle;
+}
+
+#backlogTable td input {
+    width: 350px;
+}
+
+#backlogTable td:last-child {
+    font-size: 1.07rem;
+}

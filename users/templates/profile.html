@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1>Verificando seu Perfil.</h1>
+    <br>
+    <label class="form-label">Nome de Usuário</label>
+    <input class="form-control" value="{{current_user.username}}" disabled>
+    <br>
+    <label class="form-label">Nome</label>
+    <input class="form-control" value="{{current_user.nome}}" disabled>
+    <br>
+    <label class="form-label">E-Mail</label>
+    <input class="form-control" value="{{current_user.email}}" disabled>
+    <br>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.password.label(class="form-label") }}
+        {{ form.password(class="form-control") }}
+        <br>
+        {{ form.password2.label(class="form-label") }}
+        {{ form.password2(class="form-control") }}
+        <br>
+        {{ form.submit(class="btn btn-success") }}
+    </form>
+    <br>
+    <br>
+    <h1>Suas Permissões!</h1>
+    <br>
+    <table class="table text-nowrap">
+        <thead>
+            <tr>
+                <th scope="col">Lista de Permissões</th>
+                <th scope="col" class="col-3">Data Adicionada</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for perm in current_user.permissions %}
+                <tr>
+                    <td scope="row"><span>{{perm.permission}}</span></th>
+                    <td scope="row">{{perm.date_owned}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

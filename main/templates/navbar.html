@@ -1,32 +1,61 @@
 <nav class="navbar navbar-dark bg-dark sticky-top">
     <div class="container-fluid">
 
-        <img class="me-2" src="{{ url_for('main.static', filename='images/vivo-logo.png') }}" id="logo">
-        <a class="navbar-brand" href="{{ url_for('main.index') }}">RdA Dashboard</a>
-        <div>
-            <button class="navbar-toggler ms-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
+        <a href="{{ url_for('main.index') }}" id="logo-div">
+            <img class="me-2" src="{{ url_for('main.static', filename='images/vivo-logo.png') }}" id="logo">
+            <span class="navbar-brand align-text-top pb-0">RdA Dashboard</span>
+        </a>
+        {% if current_user.is_authenticated %}
+            <div>
+                {% if current_user.is_authenticated %}
+                    <a class="btn btn-warning btn-sm" href={{url_for('users.logout')}}>Sair!</a>
+                {% else %}
+                    <a class="btn btn-primary btn-sm" href="{{url_for('users.login')}}">Login!</a>
+                {% endif %}
+                <button class="navbar-toggler ms-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
 
-        <div class="offcanvas offcanvas-end bg-dark" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-
-            <div class="offcanvas-header bg-light">
-                <div class="offcanvas-title d-flex flex-fill" id="offcanvasNavbarLabel">
-                    <h5 class="mb-0" >Menu</h5>
-                    <p class="mb-0 flex-fill mt-auto px-1 text-muted text-end" id="timenow">XX/XX/XX XX:XX:XX</p>
+            <div class="offcanvas offcanvas-end bg-dark" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-header bg-light">
+                    <div class="offcanvas-title d-flex flex-fill" id="offcanvasNavbarLabel">
+                        <h5 class="mb-0">Menu</h5>
+                        <div class="mb-0 flex-fill mt-auto px-1 text-muted text-end" id="timenowDiv">
+                            <i class="bi bi-arrow-repeat"></i>
+                            <p class="d-inline" id="timenow">XX/XX/XX XX:XX:XX</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
 
-            <div class="offcanvas-body">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('backlog.thebacklog') }}">Backlog</a>
-                    </li>
-                </ul>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav me-auto">
+                        {% for category, category_info in sidelist.items() if current_user.has_permission(category_info['perm']) %}
+                            {% if 'items' in category_info %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" id="offcanvas{{category}}Dropdown" role="button" data-bs-toggle="dropdown" data-bs-auto-close="false" aria-expanded="false">
+                                        <i class="bi bi-{{category_info['icon']}} me-2"></i>{{category}}
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="offcanvasNavbarDropdown">
+                                        {% for item, infos in category_info['items'].items() %}
+                                            {% if current_user.has_permission(infos['perm']) %}
+                                                <li><a class="dropdown-item" href={{infos['href']}}>{{item}}</a></li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% else %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link" href="{{category_info['href']}}" id="offcanvas{{category}}Dropdown" role="button">
+                                        <i class="bi bi-{{category_info['icon']}} me-2"></i>{{category}}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
-
-        </div>
+        {% endif %}
     </div>
 </nav>

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('backlog.static', filename='css/backlogTable.css' )}}">
+{% endblock %}
+
+{% block content %}
+
+    <h1>Backlog Formatado!</h1>
+    <br>
+    <h3><a href="{{url_for('backlog.download', time=time)}}">Baixar Planilha Excel</a></h3>
+    <br>
+    <div>
+        <table id="backlogTable" class="display table text-nowrap d-block overflow-auto">
+            <thead>
+                <tr>
+                    <th scope="col">Ticket</th>
+                    {% for header in df.keys() %}
+                        <th scope="col">{{header}}</th>
+                        {% if loop.index0 == 14 %}
+                            <th scope="col">Status</th>
+                        {% endif %}
+                    {% endfor %}
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for x in range(df|length) %}
+                    <tr>
+                        <td scope="row">{{df.iloc[x].name}}</td>
+                        {% for c in df.keys()%}
+                            {% if c == "Justificativa / Ação" %}
+                                {% if df.iloc[x].name|int in probes %}
+                                    <td scope="row">
+                                        <input type="text" class="form-control d-inline-block px-1 py-0" value="{{probes[df.iloc[x].name|int]['probe']}}">
+                                     </td>
+                                {% else %}
+                                     <td scope="row">
+                                        <input type="text" class="form-control d-inline-block px-1 py-0" value="{{df.iloc[x][c] if df.iloc[x][c]|string != 'nan' else ''}}">
+                                     </td>
+                                {% endif %}
+                                <td scope="row">
+                                    <i class="bi bi-bookmark"></i>
+                                    <i class="bi bi-arrow-clockwise"></i>
+                                </td>
+                            {% elif c == "Analista" %}
+                                {% if df.iloc[x].name|int in probes %}
+                                    <td scope="row">{{probes[df.iloc[x].name|int]['prober_username']}}</td>
+                                {% else %}
+                                    <td scope="row">{{df.iloc[x][c] if df.iloc[x][c]|string != "nan" else ""}}</td>
+                                {% endif %}
+                            {% else %}
+                                <td scope="row">{{df.iloc[x][c] if df.iloc[x][c]|string != "nan" else ""}}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+    <script src="{{ url_for('backlog.static', filename='js/backlogTable.js' )}}"></script>
+    <script src="{{ url_for('backlog.static', filename='js/addBacklogProbe.js' )}}"></script>
+{% endblock %}

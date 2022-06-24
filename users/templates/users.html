@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1>Adicionar um novo Usuário.</h1>
+    <br>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        {{ form.nome.label(class="form-label") }}
+        {{ form.nome(class="form-control") }}
+        <br>
+        {{ form.username.label(class="form-label") }}
+        {{ form.username(class="form-control") }}
+        <br>
+        {{ form.email.label(class="form-label") }}
+        {{ form.email(class="form-control") }}
+        <br>
+        {{ form.password.label(class="form-label") }}
+        {{ form.password(class="form-control") }}
+        <br>
+        {{ form.password2.label(class="form-label") }}
+        {{ form.password2(class="form-control") }}
+        <br>
+        {{ form.submit(class="btn btn-success") }}
+    </form>
+    <br>
+    <table class="table text-nowrap">
+        <thead>
+            <tr>
+                <th scope="col">Login do Usuário</th>
+                <th scope="col">Nome</th>
+                <th scope="col">E-mail</th>
+                <th scope="col">Data Adicionado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td scope="row">
+                        {% if current_user.has_permission('user.update') %}
+                            <a class="btn btn-secondary btn-xs mb-1 me-1" role="button" href="{{url_for('users.update', username=user.username)}}">Alterar</a>
+                        {% endif %}
+                        {{user.username}}
+                    </td>
+                    <td scope="row">{{user.nome}}</td>
+                    <td scope="row">{{user.email}}</td>
+                    <td scope="row">{{user.date_added}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

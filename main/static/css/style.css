@@ -1,19 +1,31 @@
-#logo {
-    height: 1.25rem;
-}
+#logo-div { text-decoration: none; }
 
-.navbar-toggler {
-    font-size: 1rem;
-}
+#logo { height: 1.5rem; }
 
-#timenow {
-    font-size: 0.65rem;
-    opacity: 0.5;
-}
+.navbar-toggler { font-size: 1rem; }
+
+#timenowDiv { font-size: 0.65rem; }
+
+#timenowDiv :last-child { opacity: 0.5; }
 
 .btn-xs {
   padding: .3rem .4rem;
   font-size: .65rem;
   line-height: .5;
   border-radius: .2rem;
+}
+
+.offcanvas-body .nav-link {
+  font-size: 1.075rem;
+}
+
+.offcanvas-body .dropdown-item:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-left: 4px solid rgb(100,0,150);
+    padding-left: 12px;
+}
+
+#loading-content {
+    height: 100%;
+    left: 0;
 }

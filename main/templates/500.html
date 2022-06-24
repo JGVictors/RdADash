@@ -2,10 +2,12 @@
 
 {% block content %}
 
-    <br>
     <center>
         <h1>500 Internal Error</h1>
         <p>Try Again...</p>
+        {% if e %}
+        <p>{{e}}</p>
+        {% endif %}
     </center>
 
 {% endblock %}

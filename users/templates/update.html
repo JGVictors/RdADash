@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1>Atualizando dados do Usuario!</h1>
+    <br>
+    <form action=".?f=0" method="POST">
+        {{ forms[0].hidden_tag() }}
+        {{ forms[0].username.label(class="form-label") }}
+        {{ forms[0].username(class="form-control", disabled=true) }}
+        <br>
+        {{ forms[0].nome.label(class="form-label") }}
+        {{ forms[0].nome(class="form-control") }}
+        <br>
+        {{ forms[0].email.label(class="form-label") }}
+        {{ forms[0].email(class="form-control") }}
+        <br>
+        {{ forms[0].submit(class="btn btn-success") }}
+        {% if current_user.has_permission('users.delete') %}
+            <a class="btn btn-danger" role="button" href="{{url_for('users.delete', username=username)}}">Deletar!</a>
+        {% endif %}
+    </form>
+    <br>
+    <form action="?f=1" method="POST">
+        {{ forms[1].hidden_tag() }}
+        {{ forms[1].password.label(class="form-label") }}
+        {{ forms[1].password(class="form-control") }}
+        <br>
+        {{ forms[1].password2.label(class="form-label") }}
+        {{ forms[1].password2(class="form-control") }}
+        <br>
+        {{ forms[1].submit(class="btn btn-success") }}
+    </form>
+
+    <br>
+    <br>
+    <h1>Permissões do Usuário!</h1>
+    {% if current_user.has_permission('users.update.permissions') %}
+        <br>
+        <form action="?f=2" method="POST">
+            {{ forms[2].hidden_tag() }}
+            <div class="d-flex">
+                {{ forms[2].permission(class="form-control", placeholder=forms[2].permission.label.text)}}
+                {{ forms[2].submit(class="btn btn-success ms-2") }}
+            </div>
+        </form>
+    {% endif %}
+    <br>
+    <table class="table text-nowrap">
+        <thead>
+            <tr>
+                <th scope="col">Lista de Permissões</th>
+                <th scope="col" class="col-3">Data Adicionada</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for perm in perms %}
+                <tr>
+                    <td scope="row">
+                        {% if current_user.has_permission('users.update.permissions') %}
+                            <a class="btn btn-danger btn-xs mb-1 me-1" role="button" href="{{url_for('users.delete_perm', id=perm.id)}}">Remover</a>
+                        {% endif %}
+                        <span>{{perm.permission}}</span>
+                    </td>
+                    <td scope="row">{{perm.date_owned}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
