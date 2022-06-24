@@ -28,7 +28,7 @@ def thebacklog():
     return render_template('backlog.html', dtls=dtls, form=form)
 
 
-@backlog.route('/backlog/<int:time>')
+@backlog.route('/<int:time>')
 @permission_required('backlog.view')
 def access(time: int):
     fileloc = backlog_fileloc(float(time))
@@ -41,7 +41,7 @@ def access(time: int):
     return render_template('backlog_access.html', df=df, time=time, probes=get_tickets_last_probes(time))
 
 
-@backlog.route('/backlog/<int:time>/probe/<int:ticket>', methods=['POST'])
+@backlog.route('/<int:time>/probe/<int:ticket>', methods=['POST'])
 @permission_required('backlog.probe')
 def probe(time: int, ticket: int):
     if 'probe' not in request.form:
@@ -71,6 +71,20 @@ def get_tickets_last_probes(time: int):
                                           'date_probed': prb.date_probed}
 
     return prbs_return
+
+
+@backlog.route('/<int:time>/get_ticket_probe/<int:ticket>',  methods=['POST'])
+@permission_required('backlog.get_ticket_probe')
+def get_ticket_last_probe(time: int, ticket: int):
+    prbs = BacklogProbe.query.filter_by(backlog_timeref=time, ticket_probed=ticket)
+    if prbs.count() < 1:
+        return '', 404
+    prb = prbs.order_by(BacklogProbe.id.desc()).first()
+    prb = jsonify({'id': prb.id,
+                   'probe': prb.probe,
+                   'prober_username': prb.prober_username,
+                   'date_probed': prb.date_probed})
+    return prb
 
 
 @backlog.route('/download/<int:time>')
