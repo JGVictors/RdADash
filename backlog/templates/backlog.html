@@ -5,18 +5,20 @@
     <h1>Backlog NOC</h1>
     <br>
     <h3>Lista de Backlogs</h3>
-        <br>
-    <form method="POST" enctype="multipart/form-data" id="uploadBacklog">
-        {{ form.hidden_tag() }}
-        <div class="d-flex">
-            {{ form.submit(class="btn btn-secondary me-2", value='Importar Novo Backlog') }}
-            {{ form.arquivo(class="form-control", id='fileBacklog') }}
-        </div>
-    </form>
-    <div class="progress mt-2">
-        <div class="progress-bar progress-bar-striped progress-bar-animated text-white text-opacity-80" role="progressbar" id="uploadBacklogProgress"></div>
-    </div>
     <br>
+    {% if current_user.has_permission('backlog.upload') %}
+        <form method="POST" enctype="multipart/form-data" id="uploadBacklog">
+            {{ form.hidden_tag() }}
+            <div class="d-flex">
+                {{ form.submit(class="btn btn-secondary me-2", value='Importar Novo Backlog') }}
+                {{ form.arquivo(class="form-control", id='fileBacklog') }}
+            </div>
+        </form>
+        <div class="progress mt-2">
+            <div class="progress-bar progress-bar-striped progress-bar-animated text-white text-opacity-80" role="progressbar" id="uploadBacklogProgress"></div>
+        </div>
+        <br>
+    {% endif %}
     <div>
         {% for d in dtls%}
             <h4>{{loop.index0 + 1}}. <a href="{{url_for('backlog.access', time=d.timestamp()|int)}}" class="text-dark">Backlog {{d.strftime('%D ás %T')}}</a></h4>

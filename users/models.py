@@ -5,21 +5,23 @@ from datetime import datetime
 
 
 class Users(db.Model, UserMixin):
+
     username = db.Column(db.String(24), primary_key=True)
     password_hash = db.Column(db.String(128), nullable=False)
     last_password_change = db.Column(db.DateTime)
     nome = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False)
-    date_added = db.Column(db.DateTime, default=datetime.now())
+    date_added = db.Column(db.DateTime, nullable=False)
 
     permissions = db.relationship('Permissions', backref='owner', foreign_keys='Permissions.owner_username')
     permissions_given = db.relationship('Permissions', backref='giver', foreign_keys='Permissions.giver_username')
 
-    def __init__(self, username, nome, email, password):
-        self.username = username
+    def __init__(self, username: str, nome: str, email: str, password: str):
+        self.username = username.upper()
         self.nome = nome
-        self.email = email
+        self.email = email.lower()
         self.password = password
+        self.date_added = datetime.now()
 
     def get_id(self):
         return self.username
@@ -36,6 +38,7 @@ class Users(db.Model, UserMixin):
         return check_password_hash(self.password_hash, pswd)
 
     def has_permission(self, perm: str):
+        perm = perm.lower()
         if self.is_authenticated:
             user_perms = []
             for p in self.permissions:
@@ -59,9 +62,10 @@ class Permissions(db.Model):
     owner_username = db.Column(db.String(24), db.ForeignKey('users.username'))
     giver_username = db.Column(db.String(24), db.ForeignKey('users.username'))
     permission = db.Column(db.String(256), nullable=False)
-    date_owned = db.Column(db.DateTime, default=datetime.now())
+    date_owned = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, owner, giver, permission):
+    def __init__(self, owner, giver, permission: str):
         self.owner_username = owner
         self.giver_username = giver
-        self.permission = permission
+        self.permission = permission.lower()
+        self.date_owned = datetime.now()

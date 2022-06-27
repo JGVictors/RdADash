@@ -8,10 +8,11 @@ class BacklogProbe(db.Model):
     ticket_probed = db.Column(db.Integer, nullable=False)
     prober_username = db.Column(db.String(24), db.ForeignKey('users.username'))
     probe = db.Column(db.String(256), nullable=False)
-    date_probed = db.Column(db.DateTime, default=datetime.now())
+    date_probed = db.Column(db.DateTime, nullable=False)
 
     def __init__(self, backlog_timeref, ticket_probed, probe, prober):
         self.backlog_timeref = backlog_timeref
         self.ticket_probed = ticket_probed
         self.probe = probe
         self.prober_username = prober
+        self.date_probed = datetime.now()

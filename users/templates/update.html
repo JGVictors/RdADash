@@ -4,10 +4,10 @@
 
     <h1>Atualizando dados do Usuario!</h1>
     <br>
-    <form action=".?f=0" method="POST">
+    <form action="?f=0" method="POST">
         {{ forms[0].hidden_tag() }}
-        {{ forms[0].username.label(class="form-label") }}
-        {{ forms[0].username(class="form-control", disabled=true) }}
+        <label class="form-label">Usuário</label>
+        <input type="text" class="form-control" value="{{username}}" disabled>
         <br>
         {{ forms[0].nome.label(class="form-label") }}
         {{ forms[0].nome(class="form-control") }}

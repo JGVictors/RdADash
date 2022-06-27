@@ -31,23 +31,21 @@
 
                 <div class="offcanvas-body">
                     <ul class="navbar-nav me-auto">
-                        {% for category, category_info in sidelist.items() if current_user.has_permission(category_info['perm']) %}
+                        {% for category, category_info in sidelist.items() if 'perm' not in category_info['perm'] or current_user.has_permission(category_info['perm']) %}
                             {% if 'items' in category_info %}
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" id="offcanvas{{category}}Dropdown" role="button" data-bs-toggle="dropdown" data-bs-auto-close="false" aria-expanded="false">
+                                    <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="false" aria-expanded="false">
                                         <i class="bi bi-{{category_info['icon']}} me-2"></i>{{category}}
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="offcanvasNavbarDropdown">
-                                        {% for item, infos in category_info['items'].items() %}
-                                            {% if current_user.has_permission(infos['perm']) %}
-                                                <li><a class="dropdown-item" href={{infos['href']}}>{{item}}</a></li>
-                                            {% endif %}
+                                        {% for item, infos in category_info['items'].items() if 'perm' not in infos or current_user.has_permission(infos['perm']) %}
+                                            <li><a class="dropdown-item" href={{infos['href']}}>{{item}}</a></li>
                                         {% endfor %}
                                     </ul>
                                 </li>
                             {% else %}
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link" href="{{category_info['href']}}" id="offcanvas{{category}}Dropdown" role="button">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{category_info['href']}}" role="button">
                                         <i class="bi bi-{{category_info['icon']}} me-2"></i>{{category}}
                                     </a>
                                 </li>

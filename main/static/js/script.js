@@ -11,7 +11,6 @@ function updateTime(timeDiv){
     timeRfrsh = timeDiv.children().first()
     timeRfrsh.click(false)
     timeRfrsh.removeAttr("role")
-    
 
     $.ajax({
         url: "/getTimenow",

@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(() => {
 
     $.fn.dataTable.ext.order['dom-text'] = function (settings, col) {
         return this.api()

@@ -30,7 +30,6 @@ def init_navbar_sidelist(app: Flask):
                               'items': {'Usuários': {'href': url_for('users.theusers'),
                                                      'perm': 'users.view'}}},
             'Perfil': {'icon': 'person',
-                       'perm': 'menu.perfil',
                        'href': url_for('users.profile')}
         }
         return dict(sidelist=sidelist)

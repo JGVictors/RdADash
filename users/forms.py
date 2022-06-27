@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, StringField, PasswordField
+from wtforms import SubmitField, StringField, PasswordField, EmailField
 from wtforms.validators import DataRequired, Email, EqualTo, Regexp
 
 
@@ -11,9 +11,7 @@ class LoginForm(FlaskForm):
 
 class UserUpdateForm(FlaskForm):
     nome = StringField('Insira um nome', validators=[DataRequired()])
-    username = StringField('Insira um nome de usuário', validators=[DataRequired()])
-    email = StringField('Insira um e-mail', validators=[DataRequired(),
-                                                        Email(message='Informe um e-mail valido.')])
+    email = EmailField('Insira um e-mail', validators=[DataRequired(), Email(message='Informe um e-mail valido.')])
     submit = SubmitField('Concluir!')
 
 
@@ -25,6 +23,7 @@ class ChangePasswordForm(FlaskForm):
 
 
 class UserCreate(UserUpdateForm, ChangePasswordForm):
+    username = StringField('Insira um nome de usuário', validators=[DataRequired(), Regexp('[A-z0-9]')])
     submit = SubmitField('Cadastrar Usuário!')
 
 

@@ -1,9 +1,9 @@
-import flask_sqlalchemy.model
 from flask import Blueprint, render_template, flash, url_for, request, redirect
 from extentions import login_manager, db, permission_required, is_safe_url
 from users.models import Users, Permissions
 from users.forms import LoginForm, UserCreate, UserUpdateForm, PermissionForm, ChangePasswordForm
 from flask_login import login_required, current_user, login_user, logout_user
+from datetime import datetime
 from re import sub
 
 
@@ -60,7 +60,7 @@ def login():
     if current_user.is_authenticated:
         return redirect("/")
     elif request.method == 'POST':
-        user = Users.query.filter_by(username=form.username.data).first()
+        user = Users.query.get(form.username.data.upper())
         if user and user.verify_password(form.password.data):
             login_user(user)
             flash('Login realizado com sucesso!')
@@ -90,56 +90,65 @@ def theusers():
             flash('Já tem alguém registrado com esse usuário!')
             return redirect(url_for('users.theusers'))
         else:
-            user = Users(sub('[^A-Z0-9]', '', form.username.data.upper()),
+            user = Users(sub('[^A-z0-9]', '', form.username.data),
                          form.nome.data, form.email.data, form.password.data)
             try:
                 db.session.add(user)
                 db.session.commit()
             except Exception as e:
                 flash(f'Erro! Usuário não foi adicionado.')
-                return render_template('/500', e=e), 500
+                return render_template('/500.html', e=e), 500
             flash('Usuário adicionado com sucesso!')
     users = Users.query.order_by(Users.date_added)
 
     return render_template('users.html', form=form, users=users)
 
 
-@users.route('/profile')
+@users.route('/profile', methods=['GET', 'POST'])
 def profile():
     password_form = ChangePasswordForm()
+    if password_form.validate_on_submit():
+        try:
+            current_user.password = password_form.password.data
+            current_user.last_password_change = datetime.now()
+            db.session.commit()
+        except Exception as e:
+            return render_template('/500.html', e=e), 500
+        flash('Senha alterada com sucesso!')
     return render_template('profile.html', form=password_form)
 
 
 @users.route('/users/update/<username>', methods=['GET', 'POST'])
 @permission_required('users.update')
 def update(username: str):
-    form = UserUpdateForm()
+    user_form = UserUpdateForm()
     password_form = ChangePasswordForm()
     perm_form = PermissionForm()
-    user_to_update = Users.query.get_or_404(username)
+    user_to_update = Users.query.get_or_404(username.upper())
+    fs = int(request.args.get('f')) if 'f' in request.args else None
     if request.method == 'POST':
-        if form.validate_on_submit():
+        if fs == 0 and user_form.validate_on_submit():
             try:
-                user_to_update.nome = form.nome.data
-                user_to_update.email = form.email.data
+                user_to_update.nome = user_form.nome.data
+                user_to_update.email = user_form.email.data.lower()
                 db.session.commit()
             except Exception as e:
                 db.session.rollback()
                 flash(f'Erro ao realizar alteração...')
                 return render_template('/500.html', e=e), 500
             flash('Alteração realizado com sucesso!')
-        elif password_form.validate_on_submit():
+        elif fs == 1 and password_form.validate_on_submit():
             try:
                 user_to_update.password = password_form.password.data
-                user_to_update.last_password_change = None
+                user_to_update.last_password_change = datetime.now()
                 db.session.commit()
             except Exception as e:
                 db.session.rollback()
                 flash(f'Erro ao realizar alteração...')
                 return render_template('/500.html', e=e), 500
-            flash('Alteração realizado com sucesso!')
-        elif perm_form.validate_on_submit() and current_user.has_permission('users.update.permissions'):
-            perm_form.permission.data = sub('[^A-z0-9.*]', '', perm_form.permission.data).lower()
+            flash('Alteração realizada com sucesso!')
+        elif fs == 2 and perm_form.validate_on_submit() and current_user.has_permission('users.update.permissions'):
+            perm_form.permission.data = sub('[^A-z0-9.*]', '', perm_form.permission.data)
             if not current_user.has_permission(perm_form.permission.data) or \
                     perm_form.permission.data == '*' and current_user.username != 'SYSTEM':
                 flash('Você não pode adicionar essa permissão.')
@@ -155,16 +164,15 @@ def update(username: str):
                     return render_template('500.html', e=e), 500
                 flash('Permissão adicionada com sucesso!')
 
-    form.username.data = user_to_update.username
-    form.nome.data = user_to_update.nome
-    form.email.data = user_to_update.email
+    if fs != 0:
+        user_form.nome.data = user_to_update.nome
+        user_form.email.data = user_to_update.email
 
     perm_form.permission.data = None
     perms = user_to_update.permissions
 
-    fs = int(request.args.get('f')) if 'f' in request.args else None
-
-    return render_template('update.html', forms=[form, password_form, perm_form], fs=fs, username=username, perms=perms)
+    return render_template('update.html', forms=[user_form, password_form, perm_form], fs=fs, username=username,
+                           perms=perms)
 
 
 @users.route('/users/update/delete_perm/<id>')
